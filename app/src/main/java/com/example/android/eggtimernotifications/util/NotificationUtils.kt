@@ -17,8 +17,11 @@
 package com.example.android.eggtimernotifications.util
 
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import androidx.core.app.NotificationCompat
+import com.example.android.eggtimernotifications.MainActivity
 import com.example.android.eggtimernotifications.R
 
 // Notification ID.
@@ -28,11 +31,10 @@ private val FLAGS = 0
 
 
 fun NotificationManager.sendNotification(messageBody: String, applicationContext: Context) {
-    // Create the content intent for the notification, which launches
-    // this activity
-    // TODO: Step 1.11 create intent
+    val contentIntent = Intent(applicationContext, MainActivity::class.java)
+    val contentPendingIntent = PendingIntent.getActivity(applicationContext, NOTIFICATION_ID, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
 
-    // TODO: Step 1.12 create PendingIntent
+        // TODO: Step 1.12 create PendingIntent
 
     // TODO: Step 2.0 add style
 
@@ -44,6 +46,8 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
         .setSmallIcon(R.drawable.cooked_egg)
         .setContentTitle(applicationContext.getString(R.string.notification_title))
         .setContentText(messageBody)
+        .setContentIntent(contentPendingIntent)
+        .setAutoCancel(true)
 
     notify(NOTIFICATION_ID, builder.build())
     // TODO: Step 1.8 use the new 'breakfast' notification channel
