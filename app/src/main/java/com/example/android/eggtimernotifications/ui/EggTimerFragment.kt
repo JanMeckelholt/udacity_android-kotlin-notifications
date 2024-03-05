@@ -24,15 +24,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.android.eggtimernotifications.R
 import com.example.android.eggtimernotifications.databinding.FragmentEggTimerBinding
+import com.google.firebase.messaging.FirebaseMessaging
 
 class EggTimerFragment : Fragment() {
 
-    private val TOPIC = "breakfast"
+    private val TOPIC = "Breakfast"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,8 +51,19 @@ class EggTimerFragment : Fragment() {
         binding.lifecycleOwner = this.viewLifecycleOwner
 
         createChannel(getString(R.string.egg_notification_channel_id), getString(R.string.egg_notification_channel_name))
-
+        subscribeTopic(TOPIC)
         return binding.root
+    }
+
+    private fun subscribeTopic(topic : String){
+        FirebaseMessaging.getInstance().subscribeToTopic(topic)
+            .addOnCompleteListener{ task ->
+                var msg = getString((R.string.message_subscribed), topic)
+                if (!task.isSuccessful){
+                    msg = getString(R.string.message_subscribe_failed)
+                }
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun createChannel(channelId: String, channelName: String) {
@@ -63,11 +76,6 @@ class EggTimerFragment : Fragment() {
             val notificationManager = requireActivity().getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(notificationChannel)
         }
-
-
-
-        // TODO: Step 1.6 END create a channel
-
     }
 
     companion object {
